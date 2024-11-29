@@ -142,9 +142,13 @@ def main():
     for domain in domains_to_renew:
         try:
 
-            # Run AutoSSL check
-            user = get_cpanel_user(domain)
-            run_autossl_check(user)
+            try:
+                # Run AutoSSL check
+                user = get_cpanel_user(domain)
+                run_autossl_check(user)
+            except Exception as e:
+                print(e)
+
 
             # Revert Cloudflare A record to Load Balancer IP
             update_cloudflare_record(domain, Env.LOAD_BALANCER_IP)
