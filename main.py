@@ -109,7 +109,8 @@ def run_autossl_check(user):
         raise Exception(
             f"Error running AutoSSL check for {user}: {result.stderr.decode('utf-8').strip()}"
         )
-
+    
+    log_message(result.stdout.decode("utf-8").strip())
 
 def main():
     """Main script logic."""
