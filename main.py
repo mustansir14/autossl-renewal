@@ -9,6 +9,7 @@ from internal.cloudflare import CloudflareClient
 from internal.env import Env
 
 LOG_FILE = "/var/log/cf_autossl_renew.log"
+HOURS_LEFT_TO_EXPIRY=48
 
 
 cloudflare = CloudflareClient(
@@ -122,7 +123,7 @@ def main():
                 continue
 
             time_to_expiry = expiry_date - datetime.now()
-            if time_to_expiry > timedelta(hours=48):
+            if time_to_expiry > timedelta(hours=HOURS_LEFT_TO_EXPIRY):
                 log_message(f"Skipping {domain}: Certificate not expiring soon.")
                 continue
 
