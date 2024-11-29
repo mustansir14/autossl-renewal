@@ -1,6 +1,6 @@
 import subprocess
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -37,7 +37,7 @@ def get_certificate_expiry(domain):
         with open(cert_path, "rb") as cert_file:
             cert_data = cert_file.read()
         cert = x509.load_pem_x509_certificate(cert_data, default_backend())
-        return cert.not_valid_after
+        return cert.not_valid_after_utc
     except Exception as e:
         log_message(f"Error checking certificate expiry for {domain}: {e}")
         return None
@@ -122,7 +122,7 @@ def main():
             if not expiry_date:
                 continue
 
-            time_to_expiry = expiry_date - datetime.now()
+            time_to_expiry = expiry_date - datetime.now(timezone.utc)
             if time_to_expiry > timedelta(hours=HOURS_LEFT_TO_EXPIRY):
                 log_message(f"Skipping {domain}: Certificate not expiring soon.")
                 continue
