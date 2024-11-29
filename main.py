@@ -133,9 +133,10 @@ def main():
         except Exception:
             pass
 
-    # Wait for propagation
-    log_message(f"Waiting for {Env.WAIT_TIME} seconds for DNS propagation...")
-    time.sleep(Env.WAIT_TIME)
+    if domains_to_renew:
+        # Wait for propagation
+        log_message(f"Waiting for {Env.WAIT_TIME} seconds for DNS propagation...")
+        time.sleep(Env.WAIT_TIME)
 
     for domain in domains_to_renew:
         try:
