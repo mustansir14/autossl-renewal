@@ -7,6 +7,7 @@ from cryptography.hazmat.backends import default_backend
 
 from internal.cloudflare import CloudflareClient
 from internal.env import Env
+from internal.uapi import exclude_subdomains_from_autossl
 
 LOG_FILE = "/var/log/cf_autossl_renew.log"
 HOURS_LEFT_TO_EXPIRY=48
@@ -95,6 +96,13 @@ def get_cpanel_user(domain):
 
 def run_autossl_check(user):
     """Run the AutoSSL check for a cPanel user using cPanel API."""
+
+    # exclude subdomains from check
+    try:
+        exclude_subdomains_from_autossl(user)
+    except Exception as e:
+        log_message("Error excluding sub domains: " + str(e))
+
     result = subprocess.run(
         f"/usr/local/cpanel/bin/autossl_check --user={user}",
         stdout=subprocess.PIPE,
@@ -109,8 +117,9 @@ def run_autossl_check(user):
         raise Exception(
             f"Error running AutoSSL check for {user}: {result.stderr.decode('utf-8').strip()}"
         )
-    
+
     log_message(result.stdout.decode("utf-8").strip())
+
 
 def main():
     """Main script logic."""
@@ -149,7 +158,6 @@ def main():
                 run_autossl_check(user)
             except Exception as e:
                 print(e)
-
 
             # Revert Cloudflare A record to Load Balancer IP
             update_cloudflare_record(domain, Env.LOAD_BALANCER_IP)
