@@ -10,7 +10,7 @@ from internal.env import Env
 from internal.uapi import exclude_subdomains_from_autossl
 
 LOG_FILE = "/var/log/cf_autossl_renew.log"
-HOURS_LEFT_TO_EXPIRY=48
+HOURS_LEFT_TO_EXPIRY=168 # 7 days
 
 
 cloudflare = CloudflareClient(
